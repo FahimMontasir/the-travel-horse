@@ -13,23 +13,23 @@ import PrivateRoute from './components/PrivateRoute/PrivateRoute';
 
 export const loginContext = createContext();
 const App = () => {
-  const [userName, setUserName] = useState({})
+  const [userData, setUserData] = useState({})
   const [amount, setAmount] = useState({})
   //to set the amount of selected car
   const handleCategory = (car) => {
     setAmount(car)
   }
   return (
-    <loginContext.Provider value={[userName, setUserName]}>
+    <loginContext.Provider value={[userData, setUserData]}>
       <Router className="background">
         <Heading />
         <Switch>
           <Route path="/home">
             <HomePage handleCategory={handleCategory} />
           </Route>
-          <Route path="/destination">
+          <PrivateRoute path="/destination">
             <Destination car={amount} />
-          </Route>
+          </PrivateRoute>
           <Route path="/blog">
             <h1 style={{ textAlign: 'center' }}>No blog available right now!</h1>
           </Route>

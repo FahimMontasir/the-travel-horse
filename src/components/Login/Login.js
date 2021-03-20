@@ -6,19 +6,27 @@ import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import './Login.css'
 import { loginContext } from "../../App";
 import { firebaseInitialize, handleCreateUser, handleExistingUser, handleFbBtn, handleGoogleBtn } from "./Firebase";
+import { useHistory, useLocation } from "react-router";
+
 
 firebaseInitialize();
 const Login = () => {
-  const [userName, setUserName] = useContext(loginContext);
+  const [userData, setUserData] = useContext(loginContext);
   const [errorMsg, setErrorMsg] = useState("")
   const [newUser, setNewUser] = useState(true);
+  //react hook form
   const { register, errors, handleSubmit, watch } = useForm();
   const password = useRef({});
   password.current = watch("password", "");
+
+  let history = useHistory();
+  let location = useLocation();
+  let { from } = location.state || { from: { pathname: "/" } };
   //handle set or get data
   const handleSetData = (res) => {
-    setUserName(res.name)
-    setErrorMsg(res.name)
+    setUserData(res)
+    setErrorMsg(res.message)
+    res.name && history.replace(from);
   }
   //google
   const handleGoogleSignUp = () => {
@@ -34,7 +42,6 @@ const Login = () => {
 
   //form
   const onSubmit = data => {
-    console.log(data)
     if (!newUser) {
       const email = data.email;
       const userPassword = data.password;
@@ -48,8 +55,8 @@ const Login = () => {
         .then(res => handleSetData(res))
     }
   };
-  //once a user create account he/she will be redirected 
-  //to destination page and doesn't have to log in.
+  //once a user create an account he/she will be redirected 
+  //to destination page and doesn't have to log in again.
 
   return (
     <div className="login-page">
@@ -86,6 +93,7 @@ const Login = () => {
           type="password"
           placeholder="confirm password"
           ref={register({
+            required: true,
             validate: value =>
               value === password.current || "The passwords do not match"
           })}
@@ -98,8 +106,10 @@ const Login = () => {
       </form>
 
       <div className="others-login">
-        <h1><Button variant="light" onClick={handleGoogleSignUp}><FontAwesomeIcon size="2x" icon={faGoogle} /></Button>
+        <h1 style={{ textAlign: 'center' }}><Button variant="light" onClick={handleGoogleSignUp}><FontAwesomeIcon size="2x" icon={faGoogle} /></Button>
           <Button onClick={handleFacebookSignUp} variant="light"><FontAwesomeIcon size="2x" icon={faFacebook} /></Button></h1>
+        {userData.isSuccess ? <h4 style={{ color: 'green' }}>"you've successfully logged in"</h4> :
+          <h5 style={{ color: 'red' }}> {errorMsg}</h5>}
       </div>
     </div>
   );

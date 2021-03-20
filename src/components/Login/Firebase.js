@@ -1,6 +1,7 @@
 import firebase from "firebase/app";
 import "firebase/auth";
 import firebaseConfig from "./firebase.config";
+
 //firebase initialize
 export const firebaseInitialize = () => {
   if (firebase.apps.length === 0) {
