@@ -1,22 +1,63 @@
 import { Button } from "react-bootstrap";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { faFacebook, faGoogle } from '@fortawesome/free-brands-svg-icons'
 import './Login.css'
+import { loginContext } from "../../App";
+import { firebaseInitialize, handleCreateUser, handleExistingUser, handleFbBtn, handleGoogleBtn } from "./Firebase";
+
+firebaseInitialize();
 const Login = () => {
+  const [userName, setUserName] = useContext(loginContext);
+  const [errorMsg, setErrorMsg] = useState("")
+  const [newUser, setNewUser] = useState(true);
   const { register, errors, handleSubmit, watch } = useForm();
   const password = useRef({});
   password.current = watch("password", "");
-  const onSubmit = data => console.log(data);
-  const [newUser, setNewUser] = useState(true);
+  //handle set or get data
+  const handleSetData = (res) => {
+    setUserName(res.name)
+    setErrorMsg(res.name)
+  }
+  //google
+  const handleGoogleSignUp = () => {
+    handleGoogleBtn()
+      .then(res => handleSetData(res))
+  }
+
+  //facebook
+  const handleFacebookSignUp = () => {
+    handleFbBtn()
+      .then(res => handleSetData(res))
+  }
+
+  //form
+  const onSubmit = data => {
+    console.log(data)
+    if (!newUser) {
+      const email = data.email;
+      const userPassword = data.password;
+      handleExistingUser(email, userPassword)
+        .then(res => handleSetData(res))
+    }
+    if (newUser) {
+      const email = data.email;
+      const userPassword = data.password;
+      handleCreateUser(email, userPassword)
+        .then(res => handleSetData(res))
+    }
+  };
+  //once a user create account he/she will be redirected 
+  //to destination page and doesn't have to log in.
+
   return (
     <div className="login-page">
 
       <form className="login-form" onSubmit={handleSubmit(onSubmit)}>
         <h4>{newUser ? "Create an account" : "Log in your account"}</h4>
         {
-          newUser && <input name="firstName" type="text" placeholder="your name" ref={register({
+          newUser && <input name="name" type="text" placeholder="your name" ref={register({
             required: true,
             maxLength: 20
           })} />
@@ -39,6 +80,7 @@ const Login = () => {
         <br />
 
         {!newUser && <div style={{ textAlign: 'end' }}><Button variant="link">forgot password</Button></div>}
+
         {newUser && <input
           name="password_repeat"
           type="password"
@@ -56,7 +98,8 @@ const Login = () => {
       </form>
 
       <div className="others-login">
-        <h1><Button variant="light"><FontAwesomeIcon size="2x" icon={faGoogle} /></Button> <Button variant="light"><FontAwesomeIcon size="2x" icon={faFacebook} /></Button></h1>
+        <h1><Button variant="light" onClick={handleGoogleSignUp}><FontAwesomeIcon size="2x" icon={faGoogle} /></Button>
+          <Button onClick={handleFacebookSignUp} variant="light"><FontAwesomeIcon size="2x" icon={faFacebook} /></Button></h1>
       </div>
     </div>
   );
