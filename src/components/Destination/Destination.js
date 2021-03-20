@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import './Destination.css';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import { faCoffee } from '@fortawesome/free-solid-svg-icons'
+import { faMale } from '@fortawesome/free-solid-svg-icons'
 
 const Destination = ({ car }) => {
   const { img, amount, category } = car;
@@ -44,7 +44,7 @@ const Destination = ({ car }) => {
                       <div key={idx} className="vehicle">
                         <img src={img} alt="mini logo" />
                         <div>
-                          <h5>{category} <FontAwesomeIcon icon={faCoffee} />{item.quantity}</h5>
+                          <h5>{category} <FontAwesomeIcon icon={faMale} /> {item.quantity}</h5>
                         </div>
                         <h5>${item.price}</h5>
                       </div>
