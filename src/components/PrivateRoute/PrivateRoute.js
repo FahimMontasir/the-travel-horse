@@ -8,7 +8,7 @@ const PrivateRoute = ({ children, ...rest }) => {
     <Route
       {...rest}
       render={({ location }) =>
-        userData.name ? (
+        userData.name && userData.message === undefined ? (
           children
         ) : (
           <Redirect

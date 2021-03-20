@@ -26,7 +26,7 @@ const Login = () => {
   const handleSetData = (res) => {
     setUserData(res)
     setErrorMsg(res.message)
-    res.name && history.replace(from);
+    res.email && history.replace(from);
   }
   //google
   const handleGoogleSignUp = () => {
